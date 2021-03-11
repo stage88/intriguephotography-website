@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Intrigue Photography & Gallery Certificates - intriguephotography-certificates
+
+Parameters:
+  ProjectName:
+    Description: Project name
+    Type: String
+    Default: intriguephotography
+  WebsiteDomainName:
+    Description: Website Domain Name
+    Type: String
+
+Resources:
+  WebsiteCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref WebsiteDomainName
+      ValidationMethod: EMAIL
+      DomainValidationOptions:
+        - DomainName: !Ref WebsiteDomainName
+          ValidationDomain: !Ref WebsiteDomainName
+      Tags:
+        - Key: Client
+          Value: !Ref ProjectName
+
+Outputs:
+  WebsiteCertificateArn:
+    Description: The ARN of the Website Certificate
+    Value: !Ref WebsiteCertificate
+    Export:
+      Name: !Sub ${AWS::StackName}-WebsiteCertificateArn

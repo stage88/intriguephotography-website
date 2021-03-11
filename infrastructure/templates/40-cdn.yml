@@ -1,0 +1,173 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Intrigue Photography & Gallery Infrastructure - intriguephotography-infrastructure
+
+Parameters:
+  ProjectName:
+    Description: Project name
+    Type: String
+    Default: intriguephotography
+  SiteBucket:
+    Description: Site bucket
+    Type: String
+  SiteAlias:
+    Description: Site alias
+    Type: String
+  CertificateArn:
+    Description: CDN Certificate Arn
+    Type: String
+
+Resources:
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Ref SiteBucket      
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: 404.html
+      Tags:
+        - Key: Client
+          Value: !Ref ProjectName
+
+  WebsiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    DependsOn: WebsiteBucket
+    Properties:
+      Bucket: !Ref SiteBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action:
+              - s3:GetObject
+              - s3:GetObjectVersion
+            Resource: 
+              - !Sub 'arn:aws:s3:::${SiteBucket}'
+              - !Sub 'arn:aws:s3:::${SiteBucket}/*'
+
+  WebsiteCdn:
+    Type: AWS::CloudFront::Distribution
+    DependsOn: WebsiteBucket
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !Ref SiteAlias
+        Origins:
+          - Id: !Sub ${ProjectName}-website-cdn-origin
+            DomainName: !Sub ${SiteBucket}.s3-website-ap-southeast-2.amazonaws.com
+            CustomOriginConfig:
+              HTTPPort: '80'
+              HTTPSPort: '443'
+              OriginProtocolPolicy: http-only
+        Enabled: true       
+        DefaultRootObject: 'index.html'
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          Compress: true
+          DefaultTTL: 3600 # 1 hour
+          MaxTTL: 86400 # 1 day
+          TargetOriginId: !Sub ${ProjectName}-website-cdn-origin
+          ViewerProtocolPolicy: redirect-to-https
+          ForwardedValues:
+            QueryString: true
+            Cookies:
+              Forward: none
+        CacheBehaviors:
+          - PathPattern: '*.html' # do not cache html
+            MinTTL: 0
+            MaxTTL: 0
+            DefaultTTL: 0
+            Compress: true
+            TargetOriginId: !Sub ${ProjectName}-website-cdn-origin
+            ViewerProtocolPolicy: redirect-to-https
+            ForwardedValues:
+              QueryString: true
+              Cookies:
+                Forward: none
+          - PathPattern: '*page-data/*' # do not cache page data
+            MinTTL: 0
+            MaxTTL: 0
+            DefaultTTL: 0
+            Compress: true
+            TargetOriginId: !Sub ${ProjectName}-website-cdn-origin
+            ViewerProtocolPolicy: redirect-to-https
+            ForwardedValues:
+              QueryString: true
+              Cookies:
+                Forward: none
+          - PathPattern: '*/app-data.json' # do not cache app data
+            MinTTL: 0
+            MaxTTL: 0
+            DefaultTTL: 0
+            Compress: true
+            TargetOriginId: !Sub ${ProjectName}-website-cdn-origin
+            ViewerProtocolPolicy: redirect-to-https
+            ForwardedValues:
+              QueryString: true
+              Cookies:
+                Forward: none
+        PriceClass: PriceClass_All
+        HttpVersion: http2
+        IPV6Enabled: true
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertificateArn
+          MinimumProtocolVersion: TLSv1.2_2019
+          SslSupportMethod: sni-only
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 60
+            ErrorCode: 404
+            ResponseCode: 404
+            ResponsePagePath: '/404.html'
+          - ErrorCachingMinTTL: 60
+            ErrorCode: 403
+            ResponseCode: 403
+            ResponsePagePath: '/403/index.html'
+      Tags:
+        - Key: Client
+          Value: !Ref ProjectName
+
+Outputs:
+  BucketArn:
+    Description: Website S3 Bucket Arn
+    Value: !GetAtt WebsiteBucket.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-Arn
+  BucketName:
+    Description: Website S3 Bucket Name
+    Value: !Ref BucketName
+    Export:
+      Name: !Sub ${AWS::StackName}-BucketName
+  BucketDomain:
+    Description: Website S3 Bucket Domain Name
+    Value: !GetAtt WebsiteBucket.DomainName
+    Export:
+      Name: !Sub ${AWS::StackName}-Domain
+  BucketHttpsUrl:
+    Description: Website S3 Bucket HTTPS Url
+    Value: !Join ['', ['https://', !GetAtt [WebsiteBucket, DomainName]]]
+    Export:
+      Name: !Sub ${AWS::StackName}-HttpsUrl
+  BucketWebsiteUrl:
+    Description: Website S3 Bucket Url of Website
+    Value: !GetAtt WebsiteBucket.WebsiteURL
+    Export:
+      Name: !Sub ${AWS::StackName}-WebsiteUrl
+  CDNId:
+    Description: Website CDN Id
+    Value: !Ref WebsiteCdn
+    Export:
+      Name: !Sub ${AWS::StackName}-Id
+  CDNDomainName:
+    Description: Website CDN Doman Name
+    Value: !GetAtt WebsiteCdn.DomainName
+    Export:
+      Name: !Sub ${AWS::StackName}-DomainName
+  CDNHttpsUrl:
+    Description: Website CDN Https Url
+    Value: !Join ['', ['https://', !GetAtt [WebsiteCdn, DomainName]]]
+    Export:
+      Name: !Sub ${AWS::StackName}-HttpsUrl

@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Intrigue Photography & Gallery Build Projects - intriguephotography-builds
+
+Parameters:
+  ProjectName:
+    Description: Project name
+    Type: String
+    Default: intriguephotography
+
+Resources:
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${ProjectName}-codebuild
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: codebuild.amazonaws.com
+      Path: /
+      Policies:
+        - PolicyName: !Sub ${ProjectName}-codebuild
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:*'
+                  - 's3:*'
+                  - 'codebuild:*'
+                  - 'cloudformation:*'
+                  - 'cloudfront:*'
+                  - 'ecr:*'
+                  - 'secretsmanager:GetSecretValue'       
+                Resource: '*'
+
+  WebsiteBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${ProjectName}-website
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: 'infrastructure/buildspec.yml'
+      TimeoutInMinutes: 30
+      LogsConfig: 
+        CloudWatchLogs:
+          Status: ENABLED
+      Cache:
+        Type: LOCAL
+        Modes: 
+          - LOCAL_CUSTOM_CACHE
+          - LOCAL_SOURCE_CACHE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_LARGE
+        Image: aws/codebuild/standard:5.0
+        EnvironmentVariables:
+          - Name: SITE_BUCKET
+            Type: SECRETS_MANAGER
+            Value: !Sub ${ProjectName}:WebsiteBucket
+          - Name: CLOUDFRONT_DISTRIBUTION_ID
+            Type: SECRETS_MANAGER
+            Value: !Sub ${ProjectName}:CdnId
+      Tags:
+        - Key: Client
+          Value: !Ref ProjectName
+  
+  
+          

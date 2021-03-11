@@ -1,0 +1,236 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Description: Intrigue Photography & Gallery Pipeline - intriguephotography-pipeline
+
+Parameters:
+  ProjectName:
+    Description: Project name
+    Type: String
+    Default: intriguephotography
+  DefaultBranch:
+    Description: Default branch
+    Type: String
+    Default: master
+
+Resources:
+  DeploymentArtifactStoreBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '{{resolve:secretsmanager:${ProjectName}:SecretString:DeploymentBucket}}' 
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Client
+          Value: !Ref ProjectName
+  
+  CodePipelineArtifactStoreBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '{{resolve:secretsmanager:${ProjectName}:SecretString:PipelineBucket}}'
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Client
+          Value: !Ref ProjectName
+
+  RolePolicies: 
+    Type: AWS::IAM::Policy
+    Properties: 
+      PolicyName: !Sub ${ProjectName}-codepipeline
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'codebuild:BatchGetBuilds'
+              - 'codebuild:StartBuild'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'secretsmanager:GetSecretValue'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'iam:AttachRolePolicy'
+              - 'iam:CreateRole'
+              - 'iam:CreateServiceLinkedRole'
+              - 'iam:DeleteRole'
+              - 'iam:DeleteRolePolicy'
+              - 'iam:DeleteServiceLinkedRole'
+              - 'iam:DetachRolePolicy'
+              - 'iam:GetRole'
+              - 'iam:GetRolePolicy'
+              - 'iam:GetServiceLinkedRoleDeletionStatus'
+              - 'iam:ListOpenIdConnectProviders'
+              - 'iam:ListRoles'
+              - 'iam:PassRole'
+              - 'iam:PutRolePolicy'
+              - 'iam:UpdateAssumeRolePolicy'
+              - 'sns:ListPlatformApplications'
+            Resource: '*'          
+          - Effect: Allow
+            Action:
+              - 'waf:*'
+              - 'waf-regional:*'
+              - 'wafv2:*'
+              - 'cloudfront:*'
+              - 'apigateway:*'
+              - 'application-autoscaling:*'
+              - 'autoscaling:*'
+              - 'cloudformation:*'
+              - 'cloudwatch:*'
+              - 'codedeploy:*'
+              - 'cognito-identity:*'
+              - 'cognito-idp:*'
+              - 'cognito-sync:*'
+              - 'datapipeline:*'
+              - 'dax:*'
+              - 'dynamodb:*'
+              - 'qldb:*'
+              - 'ec2:*'
+              - 'ecs:*'
+              - 'ecr:*'
+              - 'elasticache:*'
+              - 'elasticbeanstalk:*'
+              - 'elasticloadbalancing:*'
+              - 'lambda:*'
+              - 'rds:*'
+              - 'resource-groups:*'
+              - 's3:*'
+              - 'sns:*'
+              - 'sqs:*'
+              - 'tag:*'
+              - 'logs:*'
+              - 'kms:*'
+              - 'acm:*'
+            Resource: '*'
+      Roles: 
+        - !Ref CloudFormationServiceRole
+        - !Ref CodePipelineServiceRole
+  
+  CloudFormationServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      RoleName: !Sub ${ProjectName}-cloudformation
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      RoleName: !Sub ${ProjectName}-codepipeline
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+
+  WebsitePipelineWebhook:
+    Type: AWS::CodePipeline::Webhook
+    Properties:
+      Authentication: GITHUB_HMAC
+      AuthenticationConfiguration:
+        SecretToken: !Sub '{{resolve:secretsmanager:${ProjectName}:SecretString:GitHubToken}}'
+      Filters:
+        - JsonPath: "$.ref"
+          MatchEquals: refs/heads/{Branch}
+      TargetPipeline: !Ref WebsitePipeline
+      TargetAction: SourceAction
+      Name: WebsitePipelineWebhook
+      TargetPipelineVersion: !GetAtt WebsitePipeline.Version
+      RegisterWithThirdParty: true
+
+  WebsitePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub ${ProjectName}-website
+      ArtifactStore:
+        Type: S3
+        Location: !Ref CodePipelineArtifactStoreBucket
+      RoleArn: !GetAtt CodePipelineServiceRole.Arn
+      Tags:
+        - Key: Client
+          Value: !Ref ProjectName     
+      Stages:
+        - Name: Source
+          Actions: 
+            - Name: SourceAction
+              ActionTypeId: 
+                Category: Source
+                Owner: ThirdParty
+                Version: 1
+                Provider: GitHub
+              OutputArtifacts: 
+                - Name: SourceArtifact
+              Configuration: 
+                Owner: stage88
+                Repo: !Sub ${ProjectName}-website
+                Branch: !Ref DefaultBranch
+                OAuthToken: !Sub '{{resolve:secretsmanager:${ProjectName}:SecretString:GitHubToken}}'
+                PollForSourceChanges: false
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: Build-Website
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              RunOrder: 1
+              Configuration:
+                ProjectName: !Sub ${ProjectName}-website
+                PrimarySource: SourceArtifact                
+              InputArtifacts:
+                - Name: SourceArtifact
+              OutputArtifacts: 
+                - Name: BuildArtifact
+        - Name: Deploy
+          Actions:
+            - Name: CDN
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              RunOrder: 1
+              Configuration:
+                ActionMode: CREATE_UPDATE 
+                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND                
+                RoleArn: !GetAtt CloudFormationServiceRole.Arn
+                StackName: !Sub ${ProjectName}-cdn-website
+                TemplatePath: !Sub 'SourceArtifact::infrastructure/templates/40-cdn.yml'
+                ParameterOverrides: !Sub |
+                  {
+                    "SiteBucket": "{{resolve:secretsmanager:${ProjectName}:SecretString:WebsiteBucket}}",
+                    "SiteAlias": "{{resolve:secretsmanager:${ProjectName}:SecretString:DomainName}}",
+                    "CertificateArn": "{{resolve:secretsmanager:${ProjectName}:SecretString:CertificateArn}}"
+                  }
+              OutputArtifacts: []
+              InputArtifacts:
+                - Name: SourceArtifact
+                - Name: BuildArtifact

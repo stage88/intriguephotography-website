@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+      
+  post_build:
+    commands:
+      - npm ci --only=production && npm run build
+      - aws s3 rm s3://$SITE_BUCKET/ --recursive && aws s3 cp public s3://$SITE_BUCKET/ --recursive
+      - chmod +x invalidate.sh && ./invalidate.sh
+
+cache:
+  paths:
+    - '/root/.npm/**/*'
+    - 'build/**/*'
