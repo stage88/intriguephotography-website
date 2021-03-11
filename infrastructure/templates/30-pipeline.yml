@@ -160,12 +160,15 @@ Resources:
           MatchEquals: refs/heads/{Branch}
       TargetPipeline: !Ref WebsitePipeline
       TargetAction: SourceAction
-      Name: WebsitePipelineWebhook
+      Name: !Sub ${ProjectName}-webhook
       TargetPipelineVersion: !GetAtt WebsitePipeline.Version
       RegisterWithThirdParty: true
 
   WebsitePipeline:
     Type: AWS::CodePipeline::Pipeline
+    DependsOn: 
+      - CodePipelineArtifactStoreBucket
+      - RolePolicies
     Properties:
       Name: !Sub ${ProjectName}-website
       ArtifactStore:

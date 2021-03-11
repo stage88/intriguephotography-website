@@ -5,7 +5,7 @@ phases:
     runtime-versions:
       nodejs: 14
       
-  post_build:
+  build:
     commands:
       - npm ci --only=production && npm run build
       - aws s3 rm s3://$SITE_BUCKET/ --recursive && aws s3 cp public s3://$SITE_BUCKET/ --recursive
