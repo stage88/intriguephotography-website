@@ -135,7 +135,7 @@ Outputs:
     Description: Website S3 Bucket Arn
     Value: !GetAtt WebsiteBucket.Arn
     Export:
-      Name: !Sub ${AWS::StackName}-Arn
+      Name: !Sub ${AWS::StackName}-BucketArn
   BucketName:
     Description: Website S3 Bucket Name
     Value: !Ref SiteBucket
@@ -145,29 +145,29 @@ Outputs:
     Description: Website S3 Bucket Domain Name
     Value: !GetAtt WebsiteBucket.DomainName
     Export:
-      Name: !Sub ${AWS::StackName}-Domain
+      Name: !Sub ${AWS::StackName}-BucketDomain
   BucketHttpsUrl:
     Description: Website S3 Bucket HTTPS Url
     Value: !Join ['', ['https://', !GetAtt [WebsiteBucket, DomainName]]]
     Export:
-      Name: !Sub ${AWS::StackName}-HttpsUrl
+      Name: !Sub ${AWS::StackName}-BucketHttpsUrl
   BucketWebsiteUrl:
     Description: Website S3 Bucket Url of Website
     Value: !GetAtt WebsiteBucket.WebsiteURL
     Export:
-      Name: !Sub ${AWS::StackName}-WebsiteUrl
+      Name: !Sub ${AWS::StackName}-BucketWebsiteUrl
   CDNId:
     Description: Website CDN Id
     Value: !Ref WebsiteCdn
     Export:
-      Name: !Sub ${AWS::StackName}-Id
+      Name: !Sub ${AWS::StackName}-CDNId
   CDNDomainName:
     Description: Website CDN Doman Name
     Value: !GetAtt WebsiteCdn.DomainName
     Export:
-      Name: !Sub ${AWS::StackName}-DomainName
+      Name: !Sub ${AWS::StackName}-CDNDomainName
   CDNHttpsUrl:
     Description: Website CDN Https Url
     Value: !Join ['', ['https://', !GetAtt [WebsiteCdn, DomainName]]]
     Export:
-      Name: !Sub ${AWS::StackName}-HttpsUrl
+      Name: !Sub ${AWS::StackName}-CDNHttpsUrl
