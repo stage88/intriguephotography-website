@@ -196,23 +196,7 @@ Resources:
                 OAuthToken: !Sub '{{resolve:secretsmanager:${ProjectName}:SecretString:GitHubToken}}'
                 PollForSourceChanges: false
               RunOrder: 1
-        - Name: Build
-          Actions:
-            - Name: Build-Website
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Provider: CodeBuild
-                Version: 1
-              RunOrder: 1
-              Configuration:
-                ProjectName: !Sub ${ProjectName}-website
-                PrimarySource: SourceArtifact                
-              InputArtifacts:
-                - Name: SourceArtifact
-              OutputArtifacts: 
-                - Name: BuildArtifact
-        - Name: Deploy
+        - Name: Infrastructure
           Actions:
             - Name: CDN
               ActionTypeId:
@@ -236,4 +220,19 @@ Resources:
               OutputArtifacts: []
               InputArtifacts:
                 - Name: SourceArtifact
+        - Name: Build
+          Actions:
+            - Name: Build-Website
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              RunOrder: 1
+              Configuration:
+                ProjectName: !Sub ${ProjectName}-website
+                PrimarySource: SourceArtifact                
+              InputArtifacts:
+                - Name: SourceArtifact
+              OutputArtifacts: 
                 - Name: BuildArtifact
