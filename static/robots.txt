@@ -1,0 +1,3 @@
+User-agent: *
+
+sitemap: https://intriguephotography.com.au/sitemap.xml

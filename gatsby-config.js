@@ -1,18 +1,35 @@
+const withOptions = require('./src/theme/utils/default-options');
+const options = withOptions();
+
+const { mdx = true } = options;
+
 module.exports = {
   siteMetadata: {
-    title: 'Intrigue Photography and Gallery',
-    description: 'Intrigue Photography and Gallery has a high level of expertise in a diverse range of photography'
-      +', combining artistic talent with a professional and friendly',
-    author: 'Sam Ilic',
+    siteTitle: 'Intrigue Photography and Gallery',
+    siteTitleAlt: 'Intrigue Photography and Gallery',
+    siteHeadline: 'Intrigue Photography and Gallery',
+    siteUrl: 'https://intriguephotography.com.au/',
+    siteDescription: 'Intrigue Photography and Gallery has a high level of expertise in a diverse range of photography,'
+      +' combining artistic talent with a professional and friendly attitude.',
+    siteLanguage: 'en',
+    siteImage: '/logo-2.png',
+    author: '@stage88',
   },
   plugins: [
     {
-      resolve: 'gatsby-plugin-styled-components',
+      resolve: 'gatsby-source-filesystem',
       options: {
-        minify: false, // Breaks styles if not set to false
+        name: options.projectsPath,
+        path: `${__dirname}/${options.projectsPath}`,
       },
     },
-    'gatsby-plugin-react-helmet',
+    {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        name: options.pagesPath,
+        path: `${__dirname}/${options.pagesPath}`,
+      },
+    },
     {
       resolve: 'gatsby-source-filesystem',
       options: {
@@ -27,21 +44,15 @@ module.exports = {
         path: `${__dirname}/src/assets/`,
       },
     },
-    'gatsby-transformer-json',
-    {
-      resolve: 'gatsby-source-filesystem',
-      options: {
-        name: 'data',
-        path: `${__dirname}/src/data/`,
-      },
+    mdx && {
+      resolve: 'gatsby-plugin-mdx',
+      options: {},
     },
-    'gatsby-transformer-sharp',
+    'gatsby-plugin-image',
+    'gatsby-plugin-react-helmet',
     'gatsby-plugin-sharp',
-    {
-      resolve: 'gatsby-plugin-google-analytics',
-      options: {
-        trackingId: 'UA-60941248-1',
-      },
-    },
+    'gatsby-plugin-sitemap',
+    'gatsby-plugin-theme-ui',
+    'gatsby-transformer-sharp',
   ],
 };
