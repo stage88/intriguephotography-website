@@ -48,6 +48,12 @@ module.exports = {
       resolve: 'gatsby-plugin-mdx',
       options: {},
     },
+    {
+      resolve: 'gatsby-plugin-google-analytics',
+      options: {
+        trackingId: 'UA-60941248-1',
+      },
+    },
     'gatsby-plugin-image',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-sharp',
