@@ -2,7 +2,6 @@
 import { jsx } from 'theme-ui';
 import * as React from 'react';
 import { PageProps } from 'gatsby';
-import Img from 'gatsby-image';
 import Layout from './layout';
 import { ChildImageSharp } from '../types';
 import SEO from './seo';

@@ -1,0 +1,8 @@
+{
+  "reject": [
+    "@theme-ui/presets",
+    "@theme-ui/prism",
+    "theme-ui",
+    "gatsby-plugin-theme-ui"
+  ]
+}

@@ -2,7 +2,6 @@
 import { jsx, Heading } from 'theme-ui';
 import * as React from 'react';
 import { PageProps } from 'gatsby';
-import Img from 'gatsby-image';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import { transparentize } from 'polished';
 import Layout from './layout';
