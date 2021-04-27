@@ -9,6 +9,8 @@ const contentStyles = {
   margin: '0 auto',
 };
 
+// console.log(tailwind);
+
 const theme = merge(tailwind, {
   initialColorModeName: 'light',
   useCustomProperties: true,

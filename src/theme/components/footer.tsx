@@ -7,10 +7,11 @@ const Footer = ({ bg }: { bg: string }) => {
   const { siteTitle } = useSiteMetadata();
   const { theme } = useThemeUI();
 
+  // console.log({theme, bg});
   const text = readableColor(
     bg,
-    theme!.colors!.textMuted as string | undefined,
-    theme!.colors!.textMutedLight as string | undefined
+    theme!.rawColors!.textMuted as string | undefined,
+    theme!.rawColors!.textMutedLight as string | undefined
   );
 
   return (

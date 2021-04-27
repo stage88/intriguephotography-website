@@ -2,7 +2,7 @@
 import { jsx } from 'theme-ui';
 import * as React from 'react';
 import '@fontsource/work-sans/latin.css';
-import { Global } from '@emotion/core';
+import { Global } from '@emotion/react';
 import Wrapper from './layout-wrapper';
 import Sidebar from './sidebar';
 import Footer from './footer';
@@ -11,7 +11,7 @@ import { SkipNavTarget, SkipNavTrigger } from './skip-nav';
 
 type LayoutProps = { children: React.ReactNode; color?: string };
 
-const Layout = ({ children, color = 'white' }: LayoutProps) => (
+const Layout = ({ children, color = '#fff' }: LayoutProps) => (
   <React.Fragment>
     <Global
       styles={(theme) => {
@@ -35,8 +35,8 @@ const Layout = ({ children, color = 'white' }: LayoutProps) => (
             display: 'none',
           },
           '::selection': {
-            background: theme.colors.primary,
-            color: theme.colors.white,
+            background: theme.rawColors.primary,
+            color: theme.rawColors.white,
           },
           'ul > li > code, ol > li > code, p > code': {
             color: '#393A34',
