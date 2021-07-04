@@ -59,6 +59,7 @@ Resources:
             Action:
               - 'codebuild:BatchGetBuilds'
               - 'codebuild:StartBuild'
+              - 'codestar-connections:*'
             Resource: '*'
           - Effect: Allow
             Action:
@@ -149,21 +150,6 @@ Resources:
               Service: codepipeline.amazonaws.com
             Action: sts:AssumeRole
 
-  WebsitePipelineWebhook:
-    Type: AWS::CodePipeline::Webhook
-    Properties:
-      Authentication: GITHUB_HMAC
-      AuthenticationConfiguration:
-        SecretToken: !Sub '{{resolve:secretsmanager:${ProjectName}:SecretString:GitHubToken}}'
-      Filters:
-        - JsonPath: "$.ref"
-          MatchEquals: refs/heads/{Branch}
-      TargetPipeline: !Ref WebsitePipeline
-      TargetAction: SourceAction
-      Name: !Sub ${ProjectName}-webhook
-      TargetPipelineVersion: !GetAtt WebsitePipeline.Version
-      RegisterWithThirdParty: true
-
   WebsitePipeline:
     Type: AWS::CodePipeline::Pipeline
     DependsOn: 
@@ -184,17 +170,15 @@ Resources:
             - Name: SourceAction
               ActionTypeId: 
                 Category: Source
-                Owner: ThirdParty
+                Owner: AWS
                 Version: 1
-                Provider: GitHub
+                Provider: CodeStarSourceConnection
               OutputArtifacts: 
                 - Name: SourceArtifact
               Configuration: 
-                Owner: stage88
-                Repo: !Sub ${ProjectName}-website
-                Branch: !Ref DefaultBranch
-                OAuthToken: !Sub '{{resolve:secretsmanager:${ProjectName}:SecretString:GitHubToken}}'
-                PollForSourceChanges: false
+                ConnectionArn: !Sub '{{resolve:secretsmanager:${ProjectName}:SecretString:GitHubConnectionArn}}'
+                FullRepositoryId: !Sub stage88/${ProjectName}-website
+                BranchName: !Ref DefaultBranch
               RunOrder: 1
         - Name: Infrastructure
           Actions:
