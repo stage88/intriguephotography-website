@@ -266,7 +266,7 @@ exports.createPages = async ({ actions, graphql, reporter }, themeOptions) => {
 
   const result = await graphql(`
     query {
-      allProject(sort: { fields: date, order: DESC }) {
+      allMdxProject(sort: { fields: date, order: DESC }) {
         nodes {
           slug
           ... on MdxProject {
@@ -282,7 +282,7 @@ exports.createPages = async ({ actions, graphql, reporter }, themeOptions) => {
           }
         }
       }
-      allPage {
+      allMdxPage {
         nodes {
           slug
         }
@@ -297,7 +297,7 @@ exports.createPages = async ({ actions, graphql, reporter }, themeOptions) => {
 
   // console.log(JSON.stringify(result, null, 2));
 
-  const projects = result.data.allProject.nodes;
+  const projects = result.data.allMdxProject.nodes;
 
   if (projects.length > 0) {
     projects.forEach((project) => {
@@ -313,7 +313,7 @@ exports.createPages = async ({ actions, graphql, reporter }, themeOptions) => {
     });
   }
 
-  const pages = result.data.allPage.nodes;
+  const pages = result.data.allMdxPage.nodes;
 
   if (pages.length > 0) {
     pages.forEach((page) => {

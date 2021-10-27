@@ -5,7 +5,7 @@ export default ProjectComponent;
 
 export const query = graphql`
   query($slug: String!, $formatString: String!, $relativeDirectory: String!) {
-    project(slug: { eq: $slug }) {
+    project: mdxProject(slug: { eq: $slug }) {
       body
       excerpt
       color

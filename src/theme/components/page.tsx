@@ -5,7 +5,6 @@ import { PageProps } from 'gatsby';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import Layout from './layout';
 import SEO from './seo';
-import { IGatsbyImageData } from 'gatsby-plugin-image';
 
 type DataProps = {
   page: {
@@ -17,8 +16,10 @@ type DataProps = {
     custom: boolean;
     cover: {
       childImageSharp: {
-        gatsbyImageData: IGatsbyImageData;
-      }
+        resize: {
+          src: string;
+        };
+      };
     };
   };
 };
@@ -29,7 +30,7 @@ const Page: React.FC<PageProps<DataProps>> = ({ data: { page }, location }) => (
       title={page.title}
       description={page.excerpt}
       pathname={location.pathname}
-      image={page.cover?.childImageSharp.gatsbyImageData.images.fallback.src}
+      image={page.cover?.childImageSharp.resize.src}
     />
     <div
       sx={{
