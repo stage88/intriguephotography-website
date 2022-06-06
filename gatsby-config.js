@@ -49,9 +49,14 @@ module.exports = {
       options: {},
     },
     {
-      resolve: 'gatsby-plugin-google-analytics',
+      resolve: 'gatsby-plugin-google-gtag',
       options: {
-        trackingId: 'UA-60941248-1',
+        trackingIds: [
+          'G-8G4TVKDKJT',
+        ],
+        pluginConfig: {
+          head: true,
+        },
       },
     },
     'gatsby-plugin-image',

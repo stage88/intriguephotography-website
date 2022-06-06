@@ -10,8 +10,63 @@ Parameters:
     Description: Default branch
     Type: String
     Default: master
+  EmailSubscriptionEndpoint:
+    Description: Alerts email
+    Type: String
+    Default: 'stage88@gmail.com'
 
 Resources:
+  AlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties: {}
+
+  AalertsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref AlertsTopic
+      PolicyDocument:
+        Id: Id1
+        Version: 2012-10-17
+        Statement:
+          - Sid: Sid1
+            Effect: Allow
+            Principal:
+              Service:
+                - 'events.amazonaws.com'
+                - 'budgets.amazonaws.com'
+                - 'rds.amazonaws.com'
+                - 's3.amazonaws.com'
+                - 'backup.amazonaws.com'
+                - 'codestar-notifications.amazonaws.com'
+            Action: 'sns:Publish'
+            Resource: !Ref AlertsTopic
+          - Sid: Sid2
+            Effect: Allow
+            Principal:
+              AWS: '*'
+            Action: 'sns:Publish'
+            Resource: !Ref AlertsTopic
+            Condition:
+              StringEquals:
+                'AWS:SourceOwner': !Ref 'AWS::AccountId'
+          - Sid: Sid3
+            Effect: Allow
+            Principal:
+              Service: 'ses.amazonaws.com'
+            Action: 'sns:Publish'
+            Resource: !Ref AlertsTopic
+            Condition:
+              StringEquals:
+                'AWS:Referer': !Ref 'AWS::AccountId'
+  
+  AlertsEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !Ref EmailSubscriptionEndpoint
+      Protocol: email
+      TopicArn: !Ref AlertsTopic
+
   DeploymentArtifactStoreBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -220,3 +275,20 @@ Resources:
                 - Name: SourceArtifact
               OutputArtifacts: 
                 - Name: BuildArtifact
+
+  WebsitePipelineNotifications:
+    Type: AWS::CodeStarNotifications::NotificationRule
+    Properties:
+      Name: !Sub ${WebsitePipeline}-notification-rule
+      DetailType: BASIC
+      Resource: !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${WebsitePipeline}
+      EventTypeIds: 
+        - codepipeline-pipeline-pipeline-execution-failed
+        - codepipeline-pipeline-pipeline-execution-canceled
+        - codepipeline-pipeline-pipeline-execution-started
+        - codepipeline-pipeline-pipeline-execution-resumed
+        - codepipeline-pipeline-pipeline-execution-succeeded
+        - codepipeline-pipeline-pipeline-execution-superseded
+      Targets: 
+        - TargetType: SNS
+          TargetAddress: !Ref AlertsTopic
