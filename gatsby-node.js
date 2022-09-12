@@ -199,16 +199,8 @@ exports.onCreateNode = ({ node, actions, getNode, createNodeId, createContentDig
 exports.sourceNodes = ({ actions, createContentDigest }, themeOptions) => {
   const { createNode } = actions;
 
-  const {
-    projectsPrefix,
-    basePath,
-    formatString,
-    navigation,
-    pagesPath,
-    projectsPath,
-    projectsUrl,
-    projectsSort,
-  } = withDefaults(themeOptions);
+  const { projectsPrefix, basePath, formatString, navigation, pagesPath, projectsPath, projectsUrl, projectsSort } =
+    withDefaults(themeOptions);
 
   const siteConfig = {
     projectsPrefix,
@@ -246,9 +238,18 @@ const pageTemplate = require.resolve('./src/theme/pages/page-query.tsx');
 exports.createPages = async ({ actions, graphql, reporter }, themeOptions) => {
   const { createPage } = actions;
 
-  const { basePath, projectsUrl, projectsPrefix, formatString, homepagePageLimit, homepageProjectLimit } = withDefaults(
-    themeOptions
-  );
+  const defaults = withDefaults(themeOptions);
+  console.log(defaults);
+  const {
+    basePath,
+    projectsUrl,
+    projectsPrefix,
+    formatString,
+    homepagePageLimit,
+    homepageProjectLimit,
+    projectsPath,
+    pagesPath,
+  } = defaults;
 
   createPage({
     path: basePath,
@@ -299,11 +300,18 @@ exports.createPages = async ({ actions, graphql, reporter }, themeOptions) => {
 
   const projects = result.data.allMdxProject.nodes;
 
-  if (projects.length > 0) {
+  if (projects.length === 0) {
     projects.forEach((project) => {
+      console.log('project', JSON.stringify(project, null, 2));
+      const path = `/${basePath}${projectsPrefix}${project.slug}`.replace(/\/\/+/g, '/');
+      const contentFilePath = require.resolve(`./${projectsPath}${project.slug}/index.mdx`);
+      const component = `${projectTemplate}?__contentFilePath=${contentFilePath}`;
+
+      console.log(path, component);
+
       createPage({
-        path: `/${basePath}${projectsPrefix}${project.slug}`.replace(/\/\/+/g, '/'),
-        component: projectTemplate,
+        path,
+        component,
         context: {
           slug: project.slug,
           formatString,
@@ -317,9 +325,16 @@ exports.createPages = async ({ actions, graphql, reporter }, themeOptions) => {
 
   if (pages.length > 0) {
     pages.forEach((page) => {
+      console.log(JSON.stringify(page, null, 2));
+      const path = `/${basePath}/${page.slug}`.replace(/\/\/+/g, '/');
+      const contentFilePath = require.resolve(`./${pagesPath}${page.slug}/index.mdx`);
+      const component = `${pageTemplate}?__contentFilePath=${contentFilePath}`;
+
+      console.log(path, component);
+
       createPage({
-        path: `/${basePath}/${page.slug}`.replace(/\/\/+/g, '/'),
-        component: pageTemplate,
+        path,
+        component,
         context: {
           slug: page.slug,
         },

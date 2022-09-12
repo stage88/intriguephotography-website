@@ -46,7 +46,12 @@ module.exports = {
     },
     mdx && {
       resolve: 'gatsby-plugin-mdx',
-      options: {},
+    },
+    {
+      resolve: 'gatsby-plugin-page-creator',
+      options: {
+        path: `${__dirname}/${options.pagesPath}`,
+      },
     },
     {
       resolve: 'gatsby-plugin-google-gtag',

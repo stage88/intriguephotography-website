@@ -5,20 +5,20 @@ export default PageComponent;
 
 export const query = graphql`
   query($slug: String!) {
-    page: mdxPage(slug: { eq: $slug }) {
-      title
-      slug
-      excerpt
-      body
-      color
-      custom
-      cover {
-        childImageSharp {
-          resize(width: 1200, quality: 85) {
-            src
+    page: mdx(frontmatter: {slug: {eq: $slug}}) {
+      frontmatter {
+        title
+        color
+        slug
+        cover {
+          childImageSharp {
+            resize(width: 1200, quality: 85) {
+              src
+            }
           }
         }
       }
+      excerpt
     }
   }
 `;
