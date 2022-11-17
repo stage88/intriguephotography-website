@@ -46,7 +46,6 @@ module.exports = {
     },
     mdx && {
       resolve: 'gatsby-plugin-mdx',
-      options: {},
     },
     {
       resolve: 'gatsby-plugin-google-gtag',

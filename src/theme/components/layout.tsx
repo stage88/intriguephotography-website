@@ -14,7 +14,7 @@ type LayoutProps = { children: React.ReactNode; color?: string };
 const Layout = ({ children, color = '#fff' }: LayoutProps) => (
   <React.Fragment>
     <Global
-      styles={(theme) => {
+      styles={(theme: any) => {
         // console.log(theme);
         return {
           '*,*:after,*:before': {

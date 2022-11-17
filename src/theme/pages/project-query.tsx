@@ -4,7 +4,7 @@ import ProjectComponent from '../components/project';
 export default ProjectComponent;
 
 export const query = graphql`
-  query($slug: String!, $formatString: String!, $relativeDirectory: String!) {
+  query ($slug: String!, $formatString: String!, $relativeDirectory: String!) {
     project: mdxProject(slug: { eq: $slug }) {
       body
       excerpt

@@ -3,7 +3,11 @@ import { jsx } from 'theme-ui';
 import * as React from 'react';
 import { Link } from 'gatsby';
 
-const GridItem: React.FC<{ to: string; className?: string }> = ({ children, to, ...props }) => (
+const GridItem: React.FC<{ children: React.ReactNode; to: string; className?: string }> = ({
+  children,
+  to,
+  ...props
+}) => (
   // @ts-ignore
   <Link
     to={to}
@@ -18,7 +22,7 @@ const GridItem: React.FC<{ to: string; className?: string }> = ({ children, to, 
       },
       '> div:before': {
         position: 'absolute',
-        content: '\'\'',
+        content: "''",
         top: 0,
         left: 0,
         right: 0,
@@ -28,7 +32,7 @@ const GridItem: React.FC<{ to: string; className?: string }> = ({ children, to, 
       },
       '> div:after': {
         position: 'absolute',
-        content: '\'\'',
+        content: "''",
         top: 0,
         left: 0,
         right: 0,
@@ -47,7 +51,7 @@ const GridItem: React.FC<{ to: string; className?: string }> = ({ children, to, 
         right: 0,
         textAlign: 'right',
         fontWeight: 'bold',
-        fontSize: [3, 3, 4],
+        fontSize: ['1.5rem', '1.5rem', '1.875rem'],
         padding: 3,
         textShadow: '0 1px 4px rgba(0, 0, 0, 0.5)',
       },

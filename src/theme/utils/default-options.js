@@ -5,13 +5,7 @@ module.exports = (options = {}) => {
   const projectsUrl = options.projectsUrl || '/photography';
   const projectsPrefix = options.projectsPrefix || '/photography';
 
-  const projectsSort = options.projectsSort || [
-    'Weddings',
-    'Maternity',
-    'Newborn',
-    'Children',
-    'Family',
-  ];
+  const projectsSort = options.projectsSort || ['Weddings', 'Maternity', 'Newborn', 'Children', 'Family'];
 
   const pagesPath = options.pagesPath || 'content/pages';
   const formatString = options.formatString || 'DD.MM.YYYY';
@@ -19,7 +13,7 @@ module.exports = (options = {}) => {
     { name: 'Photography', slug: '/photography' },
     { name: 'About', slug: '/about' },
     { name: 'Contact', slug: '/contact' },
-  ];  
+  ];
   const homepagePageLimit = options.homepagePageLimit || 9999;
   const homepageProjectLimit = options.homepageProjectLimit || 9;
 

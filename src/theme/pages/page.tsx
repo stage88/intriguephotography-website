@@ -4,22 +4,24 @@ import Page from '../components/page';
 
 type DataProps = {
   page: {
-    title: string;
-    slug: string;
-    excerpt: string;
-    body: string;
-    color: string;
-    custom: boolean;
-    cover: {
-      childImageSharp: {
-        resize: {
-          src: string;
+    frontmatter: {
+      title: string;
+      slug: string;
+      color: string;
+      cover: {
+        childImageSharp: {
+          resize: {
+            src: string;
+          };
         };
       };
     };
+    custom: boolean;
+    excerpt: string;
   };
 };
 
-export default function SiteCorePage({ children, ...props }: PageProps<DataProps>) {
-  return <Page {...props}>{children}</Page>;
+export default function SiteCorePage(props: PageProps<DataProps>) {
+  const { children, ...rest } = props;
+  return <Page {...rest}>{children}</Page>;
 }

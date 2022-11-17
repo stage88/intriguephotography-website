@@ -22,7 +22,7 @@ function modifyGrid(data: IGridItem[], resolver = defaultResolver): IGridItem[] 
  *
  * const modifyGrid = data => onlyPages(data)
  *
- * You can also do more sophisticated filtering, like the filterBySlug() 
+ * You can also do more sophisticated filtering, like the filterBySlug()
  * function that also takes in a second parameter (an array of slugs)
  * You'll need to pass the data in the second argument:
  *

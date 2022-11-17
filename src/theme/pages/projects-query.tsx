@@ -5,7 +5,7 @@ export default ProjectsComponent;
 
 export const query = graphql`
   query {
-    projects: allMdxProject(sort: { fields: date, order: DESC }) {
+    projects: allMdxProject(sort: { date: DESC }) {
       nodes {
         shortTitle
         slug

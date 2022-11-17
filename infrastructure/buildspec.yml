@@ -5,7 +5,7 @@ phases:
     runtime-versions:
       nodejs: 14
     commands:
-      - n 16
+      - n 18
       
   build:
     commands:

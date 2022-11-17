@@ -2,7 +2,7 @@
 import { jsx, Heading } from 'theme-ui';
 import * as React from 'react';
 import { PageProps } from 'gatsby';
-import { MDXRenderer } from 'gatsby-plugin-mdx';
+import { MDXProvider } from '@mdx-js/react';
 import { transparentize } from 'polished';
 import Layout from './layout';
 import SEO from './seo';
@@ -34,8 +34,12 @@ type DataProps = {
   };
 };
 
-const Project: React.FC<PageProps<DataProps>> = ({ data: { project, images }, location }) => {
-  // console.log(images);
+const Project: React.FC<PageProps<DataProps> & { children: React.ReactNode }> = ({
+  children,
+  data: { project, images },
+  location,
+}) => {
+  // console.log({ project, location });
   return (
     <Layout color={project.color || undefined}>
       <SEO
@@ -45,12 +49,14 @@ const Project: React.FC<PageProps<DataProps>> = ({ data: { project, images }, lo
         image={project.cover.childImageSharp.gatsbyImageData.images.fallback.src}
       />
       <div sx={{ variant: 'content.project' }}>
-        <div sx={{ fontSize: 2, textTransform: 'uppercase', letterSpacing: 'wider', mb: 2 }}>{project.category}</div>
+        <div sx={{ fontSize: '1.25rem', textTransform: 'uppercase', letterSpacing: 'wider', mb: 2 }}>
+          {project.category}
+        </div>
         <Heading as='h1' variant='styles.h1' sx={{ mt: 0 }}>
           {project.title}
         </Heading>
         <div sx={{ maxWidth: '70ch', my: 4 }}>
-          <MDXRenderer>{project.body}</MDXRenderer>
+          <MDXProvider>{children}</MDXProvider>
         </div>
       </div>
       <div sx={{ backgroundColor: transparentize(0.9, project.color) }}>

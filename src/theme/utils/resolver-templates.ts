@@ -24,8 +24,8 @@ function random(seed: number) {
 export function shuffle(originalData: IGridItem[], seed = 1) {
   const data = [...originalData];
   let m = data.length;
-  let t;
-  let i;
+  let t: IGridItem;
+  let i: number;
 
   while (m) {
     i = Math.floor(random(seed) * m--);
