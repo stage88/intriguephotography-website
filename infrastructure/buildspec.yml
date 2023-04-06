@@ -9,7 +9,7 @@ phases:
       
   build:
     commands:
-      - npm ci --omit=dev && npm run build
+      - npm ci --omit=dev --legacy-peer-deps && npm run build
       - aws s3 rm s3://$SITE_BUCKET/ --recursive && aws s3 cp public s3://$SITE_BUCKET/ --recursive
       - chmod +x invalidate.sh && ./invalidate.sh
 
