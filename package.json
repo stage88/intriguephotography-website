@@ -7,9 +7,9 @@
   "license": "MIT",
   "dependencies": {
     "@emotion/core": "11.0.0",
-    "@emotion/react": "11.11.0",
+    "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
-    "@fontsource/work-sans": "4.5.14",
+    "@fontsource/work-sans": "5.0.3",
     "@mdx-js/react": "2.3.0",
     "@theme-ui/mdx": "0.15.7",
     "@theme-ui/presets": "0.15.7",
@@ -45,18 +45,18 @@
     "upgrade": "npm run clean && ncu -u && npm run clean-packages && npm install"
   },
   "devDependencies": {
-    "@types/node": "20.2.1",
-    "@types/react": "18.2.6",
+    "@types/node": "20.2.6",
+    "@types/react": "18.2.9",
     "@types/react-dom": "18.2.4",
     "@types/react-helmet": "6.1.6",
-    "@typescript-eslint/eslint-plugin": "5.59.6",
-    "@typescript-eslint/parser": "5.59.6",
+    "@typescript-eslint/eslint-plugin": "5.59.9",
+    "@typescript-eslint/parser": "5.59.9",
     "babel-plugin-root-import": "6.6.0",
-    "eslint": "8.41.0",
+    "eslint": "8.42.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-prettier": "4.2.1",
     "prettier": "2.8.8",
     "rimraf": "5.0.1",
-    "typescript": "5.0.4"
+    "typescript": "5.1.3"
   }
 }
