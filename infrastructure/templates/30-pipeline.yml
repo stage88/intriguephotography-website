@@ -212,6 +212,7 @@ Resources:
       - RolePolicies
     Properties:
       Name: !Sub ${ProjectName}-website
+      PipelineType: V2
       ArtifactStore:
         Type: S3
         Location: !Ref CodePipelineArtifactStoreBucket
