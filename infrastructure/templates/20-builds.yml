@@ -58,7 +58,7 @@ Resources:
       Environment:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_LARGE
-        Image: aws/codebuild/standard:6.0
+        Image: aws/codebuild/standard:7.0
         EnvironmentVariables:
           - Name: SITE_BUCKET
             Type: SECRETS_MANAGER
