@@ -15,7 +15,7 @@ Resources:
     Type: AWS::CertificateManager::Certificate
     Properties:
       DomainName: !Ref WebsiteDomainName
-      ValidationMethod: EMAIL
+      ValidationMethod: DNS
       DomainValidationOptions:
         - DomainName: !Ref WebsiteDomainName
           ValidationDomain: !Ref WebsiteDomainName
