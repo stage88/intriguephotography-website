@@ -45,7 +45,7 @@
     "upgrade": "npm run clean && ncu -u && npm run clean-packages && npm install"
   },
   "devDependencies": {
-    "@types/node": "22.13.8",
+    "@types/node": "22.13.14",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
     "@types/react-helmet": "6.1.11",
@@ -55,7 +55,7 @@
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.1.3",
-    "prettier": "3.5.2",
+    "prettier": "3.5.3",
     "rimraf": "6.0.1",
     "typescript": "5.8.2"
   }
