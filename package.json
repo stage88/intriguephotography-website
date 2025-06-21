@@ -14,7 +14,7 @@
     "@theme-ui/mdx": "0.17.2",
     "@theme-ui/presets": "0.17.2",
     "@theme-ui/prism": "0.17.2",
-    "gatsby": "5.14.4",
+    "gatsby": "5.14.5",
     "gatsby-plugin-emotion": "8.14.0",
     "gatsby-plugin-google-gtag": "5.14.0",
     "gatsby-plugin-image": "3.14.0",
@@ -45,7 +45,7 @@
     "upgrade": "npm run clean && ncu -u && npm run clean-packages && npm install"
   },
   "devDependencies": {
-    "@types/node": "24.0.0",
+    "@types/node": "24.0.3",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
     "@types/react-helmet": "6.1.11",
