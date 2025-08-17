@@ -3,7 +3,8 @@
 # Function to clean packages
 clean_packages() {
   echo "Cleaning packages..."
-  npm run clean-packages
+  npm run clean:build
+  npm run clean:packages
 }
 
 # Parse arguments
@@ -19,7 +20,7 @@ while getopts "c" opt; do
   esac
 done
 
-npm run clean
 ncu -u
-npm install --legacy-peer-deps
+
+npm install
 npm run build
