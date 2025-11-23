@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next dev",
     "preview": "serve bin",
-    "lint": "next lint",
+    "lint": "eslint ./src",
     "prettier": "prettier src --write",
     "clean:build": "rimraf .next && rimraf bin",
     "clean:packages": "rimraf package-lock.json && rimraf node_modules"

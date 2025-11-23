@@ -13,9 +13,11 @@ export default function Navigation() {
   const photoMenuRef = useRef<HTMLDivElement | null>(null);
 
   // Close on route change
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setPhotoOpen(false);
-  }, [pathname]);
+  }
 
   // Close on outside click
   useEffect(() => {
